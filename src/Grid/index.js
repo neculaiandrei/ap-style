@@ -1,4 +1,5 @@
-import Grid from './Grid.js';
+import DumbGrid from './DumbGrid.js';
+import VirtualGrid from './VirtualGrid.js';
 import './Grid.scss';
 
-export default Grid;
+export { DumbGrid, VirtualGrid };
