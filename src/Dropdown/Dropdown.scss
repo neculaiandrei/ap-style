@@ -1,0 +1,15 @@
+.ap-dropdown {
+  position: relative;
+
+  .options-container {
+    position: absolute;
+  }
+
+  .header {
+    position: relative;
+
+    .arrow {
+      position: absolute;
+    }
+  }
+}

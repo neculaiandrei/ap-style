@@ -1,0 +1,29 @@
+.ap-toolbar {
+  position: relative;
+  
+  color: #FFFFFF;
+  background-color: #000000;
+
+  user-select: none;
+
+  .title {
+    padding: 4px;
+
+    line-height: 40px;
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .close {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+
+    line-height: 40px;
+    font-size: 32px;
+    font-weight: bold;
+    color:white;
+
+    cursor: pointer;
+  }
+}
