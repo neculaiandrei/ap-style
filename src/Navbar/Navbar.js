@@ -7,63 +7,70 @@ class Navbar extends React.Component {
   constructor(props) {
     super(props);
 
-    const { addressingFilters, groups, sites } = props;
+    const { addressingFilters, groups, sites, viewModes } = props;
 
     this.state = {
-      selectedAddressingFilter: addressingFilters[0],
-      selectedGroup: groups[0],
-      selectedSite: sites[0]
+      addressingFilter: addressingFilters[0],
+      group: groups[0],
+      site: sites[0],
+      viewMode: viewModes[0]
     };
   }
 
-  handleAddressingSelection = value => {
+  handleAddressingFilterSelection = value => {
     this.setState({
-      selectedAddressingFilter: value
+      addressingFilter: value
     });
   };
 
   handleGroupSelection = value => {
     this.setState({
-      selectedGroup: value
+      group: value
     });
   };
 
   handleSiteSelection = value => {
     this.setState({
-      selectedSite: value
+      site: value
+    });
+  };
+
+  handleViewModeSelection = value => {
+    this.setState({
+      viewMode: value
     });
   };
 
   render() {
-    const {
-      selectedAddressingFilter,
-      selectedGroup,
-      selectedSite
-    } = this.state;
+    const { addressingFilter, group, site, viewMode } = this.state;
     const { addressingFilters, groups, sites, viewModes } = this.props;
 
     return (
       <div className="ap-navbar">
         <DropdownItem
           options={addressingFilters}
-          value={selectedAddressingFilter}
-          onSelect={this.handleAddressingSelection}
+          value={addressingFilter}
+          onSelect={this.handleAddressingFilterSelection}
         />
-        {selectedAddressingFilter.value === 1 && (
+        {addressingFilter.value === 1 && (
           <DropdownItem
             options={sites}
-            value={selectedSite}
+            value={site}
             onSelect={this.handleSiteSelection}
           />
         )}
-        {selectedAddressingFilter.value === 2 && (
+        {addressingFilter.value === 2 && (
           <DropdownItem
             options={groups}
-            value={selectedGroup}
+            value={group}
             onSelect={this.handleGroupSelection}
           />
         )}
-        <ComposedItem items={viewModes} />
+        <ComposedItem
+          items={viewModes}
+          value={viewMode}
+          onSelect={this.handleViewModeSelection}
+        />
         <PreviewItem />
       </div>
     );

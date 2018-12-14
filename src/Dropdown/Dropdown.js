@@ -5,8 +5,7 @@ class Dropdown extends React.Component {
     super(props);
 
     this.state = {
-      isExpanded: false,
-      value: props[0]
+      isExpanded: false
     };
   }
 
@@ -17,7 +16,7 @@ class Dropdown extends React.Component {
   };
 
   render() {
-    const { options, onSelect, value } = this.props;
+    const { options, value, onSelect } = this.props;
     const { isExpanded } = this.state;
 
     return (

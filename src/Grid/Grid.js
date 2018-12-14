@@ -18,7 +18,7 @@ const list = [
   ['Brian Vaughn', 'Software Engineer', 'San Jose', 'CA', 95125]
 ];
 
-function cellRenderer({ columnIndex, key, rowIndex, style }) {
+function cellRenderer({ columnIndex, key, rowIndex, style, isVisible }) {
   return (
     <div key={key} style={style}>
       {list[rowIndex][columnIndex]}
