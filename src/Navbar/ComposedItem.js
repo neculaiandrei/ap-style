@@ -9,32 +9,32 @@ class ComposedItem extends React.Component {
     };
   }
 
-  handleSelect = (item) => {
+  handleSelect = item => {
     this.setState({
       selectedItem: item
     });
-  }
+  };
 
   render() {
     const { items } = this.props;
     const { selectedItem } = this.state;
 
     return (
-      <div className='item item-composed'>
-        {
-          items.map((item, i) => (
-            <div
-              key={i} 
-              className={`sub-item ${item === selectedItem ? 'sub-item--selected' : ''}`} 
-              onClick={_ => this.handleSelect(item)}>
-              {item.label}
-            </div> 
-          ))
-        }
+      <div className="item item-composed">
+        {items.map((item, i) => (
+          <div
+            key={i}
+            className={`sub-item ${
+              item === selectedItem ? 'sub-item--selected' : ''
+            }`}
+            onClick={_ => this.handleSelect(item)}
+          >
+            {item.label}
+          </div>
+        ))}
       </div>
-    )
+    );
   }
-
 }
 
 export default ComposedItem;

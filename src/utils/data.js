@@ -29,7 +29,7 @@ export default {
     {
       label: 'DAY',
       value: 3
-    },
+    }
   ],
   groups: [
     {
@@ -85,6 +85,6 @@ export default {
     {
       label: 'Site 4',
       value: 858
-    },
+    }
   ]
 };

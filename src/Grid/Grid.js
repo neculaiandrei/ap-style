@@ -18,20 +18,17 @@ const list = [
   ['Brian Vaughn', 'Software Engineer', 'San Jose', 'CA', 95125]
 ];
 
-function cellRenderer ({ columnIndex, key, rowIndex, style }) {
+function cellRenderer({ columnIndex, key, rowIndex, style }) {
   return (
-    <div
-      key={key}
-      style={style}
-    >
+    <div key={key} style={style}>
       {list[rowIndex][columnIndex]}
     </div>
-  )  
+  );
 }
 
 const MyGrid = () => (
   <Grid
-    className='ap-grid'
+    className="ap-grid"
     cellRenderer={cellRenderer}
     columnCount={list[0].length}
     columnWidth={150}
@@ -39,6 +36,7 @@ const MyGrid = () => (
     rowCount={list.length}
     rowHeight={30}
     width={800}
-  />);
+  />
+);
 
 export default MyGrid;
