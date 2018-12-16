@@ -10,7 +10,7 @@ class VirtualGrid extends React.Component {
   constructor(props) {
     super(props);
 
-    this.backupData = props.data;
+    this.backupData = [...props.data];
 
     this.state = {
       data: props.data
@@ -27,13 +27,53 @@ class VirtualGrid extends React.Component {
     if (index === 0) {
       return 350;
     } else if (index === 1) {
-      return 550;
+      return 930;
     }
   };
 
   expandRow = rowIndex => {
+    debugger;
     var { data } = this.state;
-    var item = this.state.data[rowIndex][0];
+    var id = data[rowIndex][0].id;
+    var backupRowIndex = this.findById(id);
+    var startIndex = backupRowIndex + 1;
+    var stopIndex = -1;
+    var i = startIndex;
+    var endNotFound = true;
+
+    if (
+      this.backupData[startIndex][0].depth ===
+      this.backupData[backupRowIndex][0].depth
+    ) {
+      data[rowIndex][0].expanded = true;
+      return;
+    }
+
+    while (endNotFound) {
+      i++;
+
+      if (i === data.length) {
+        stopIndex = i;
+        endNotFound = false;
+        continue;
+      }
+
+      if (
+        this.backupData[i][0].depth <= this.backupData[backupRowIndex][0].depth
+      ) {
+        stopIndex = i;
+        endNotFound = false;
+      }
+    }
+    data[rowIndex][0].expanded = true;
+    data.splice(
+      rowIndex + 1,
+      0,
+      ...this.backupData.slice(startIndex, stopIndex)
+    );
+    this.setState({
+      data: data
+    });
   };
 
   collapseRow = rowIndex => {
@@ -85,24 +125,49 @@ class VirtualGrid extends React.Component {
     var item = this.state.data[rowIndex][columnIndex];
     if (columnIndex === 0) {
       return (
-        <div key={key} style={style} onClick={_ => this.collapseRow(rowIndex)}>
+        <div
+          className="ap-grid-cell"
+          key={key}
+          style={style}
+          onClick={_ => {
+            {
+              if (item.expanded) {
+                this.collapseRow(rowIndex);
+              } else {
+                this.expandRow(rowIndex);
+              }
+            }
+          }}
+        >
           <div>
             <span
               dangerouslySetInnerHTML={{
                 __html: this.levelRenderer(item.depth)
               }}
             />
-            {`${item.depth}-${item.name}-${item.expanded}`}
+            <span>
+              {item.expanded === undefined ? (
+                ''
+              ) : item.expanded ? (
+                <b>&#9207;</b>
+              ) : (
+                <b>&#9205;</b>
+              )}
+            </span>
+            {`${item.depth}-${item.name}`}
           </div>
         </div>
       );
     } else if (columnIndex === 1) {
       return (
-        <div key={key} style={style}>
+        <div className="ap-grid-cell" key={key} style={style}>
           <div
             style={{
+              left: '10px',
               display: 'inline-block',
-              width: `${item}%`,
+              position: 'relative',
+              width: `${item.width}%`,
+              left: `${item.left}%`,
               border: '3px black solid'
             }}
           />
@@ -123,8 +188,8 @@ class VirtualGrid extends React.Component {
           columnWidth={this.getColumnWidth}
           height={700}
           rowCount={data.length}
-          rowHeight={30}
-          width={1000}
+          rowHeight={36}
+          width={1300}
         />
         <p>Now nodes: {data.length}</p>
       </div>

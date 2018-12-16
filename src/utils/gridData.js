@@ -104,31 +104,6 @@ function getExpandedItemCount(item) {
   return count;
 }
 
-function getGridCount(data) {
-  return data.map(getExpandedItemCount).reduce((t, c) => t + c, 0);
-}
-
-function flattenData(data) {
-  var result = [];
-  data.forEach(c => {
-    result = result.concat(flattenExpandedItem(c, 0));
-  });
-
-  return result;
-}
-
-function flattenExpandedItem({ name, children }, depth) {
-  let result = [{ name, depth, expanded: true }];
-
-  if (children.length) {
-    children.forEach(c => {
-      result = result.concat(flattenExpandedItem(c, depth + 1));
-    });
-  }
-
-  return result;
-}
-
 function createRandomizedItem(depth) {
   var item = {};
   item.children = [];

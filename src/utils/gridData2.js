@@ -137,7 +137,10 @@ function flattenNode(n, d) {
         name: n.name,
         depth: d
       },
-      Math.random() * 100
+      {
+        left: Math.random() * 25,
+        width: Math.random() * 75
+      }
     ]
   ];
 
