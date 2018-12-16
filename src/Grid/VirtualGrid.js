@@ -52,23 +52,36 @@ function cellRenderer({ key, rowIndex, style }) {
   );
 }
 
+<<<<<<< HEAD
 var VirtualGridRef;
 function setRef(ref) {
   VirtualGridRef = ref;
+=======
+var GridRef;
+function setRef(ref) {
+  GridRef = ref;
+>>>>>>> 9a2a0fca23a6833d190c85686e60a4b6d96e330e
 }
 
 const VirtualGrid = () => (
   <Grid
     ref={setRef}
     className="ap-grid"
+    ref={setRef}
     cellRenderer={cellRenderer}
     cellRangeRenderer={cellRangeRenderer}
     columnCount={1}
+<<<<<<< HEAD
     columnWidth={250}
     height={300}
     rowCount={(function() {
       return data.length;
     })()}
+=======
+    columnWidth={200}
+    height={300}
+    rowCount={flattenGridData.length}
+>>>>>>> 9a2a0fca23a6833d190c85686e60a4b6d96e330e
     rowHeight={30}
     width={800}
   />
