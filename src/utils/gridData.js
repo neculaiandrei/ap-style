@@ -100,12 +100,37 @@ function getExpandedItemCount(item) {
   return count;
 }
 
+function getGridCount(data) {
+  return data.map(getExpandedItemCount).reduce((t, c) => t + c, 0);
+}
+
+function flattenData(data) {
+  var result = [];
+  data.forEach(c => {
+    result = result.concat(flattenExpandedItem(c, 0));
+  });
+
+  return result;
+}
+
+function flattenExpandedItem({ name, children }, depth) {
+  let result = [{ name, depth, expanded: true }];
+
+  if (children.length) {
+    children.forEach(c => {
+      result = result.concat(flattenExpandedItem(c, depth + 1));
+    });
+  }
+
+  return result;
+}
+
 function createRandomizedItem(depth) {
   var item = {};
   item.children = [];
   item.name = RANDOM_WORDS[Math.floor(Math.random() * RANDOM_WORDS.length)];
 
-  var numChildren = depth <= 3 ? Math.floor(Math.random() * 20 * depth) : 0;
+  var numChildren = depth <= 3 ? Math.floor(Math.random() * 10 * depth) : 0;
   for (var i = 0; i < numChildren; i++) {
     item.children.push(createRandomizedItem(depth + 1));
   }
@@ -116,7 +141,7 @@ function createRandomizedItem(depth) {
 function createRandomizedData() {
   var data = [];
 
-  for (var i = 0; i < 20; i++) {
+  for (var i = 0; i < 5; i++) {
     data.push(createRandomizedItem(1));
   }
 
@@ -134,8 +159,7 @@ On average you'll get ~120k nodes
 */
 var gridData = createRandomizedData();
 
-var gridData_count = gridData
-  .map(getExpandedItemCount)
-  .reduce((t, c) => t + c, 0);
+var gridDataCount = getGridCount(gridData);
 
-export { gridData, gridData_count };
+var flattenGridData = flattenData(gridData);
+export { gridData, gridDataCount, flattenGridData };
