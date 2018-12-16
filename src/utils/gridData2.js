@@ -109,7 +109,7 @@ function createRandomizedItem(depth) {
   item.children = [];
   item.name = RANDOM_WORDS[Math.floor(Math.random() * RANDOM_WORDS.length)];
 
-  var numChildren = depth <= 3 ? Math.floor(Math.random() * 20 * depth) : 0;
+  var numChildren = depth <= 5 ? Math.floor(Math.random() * 15) : 0;
   for (var i = 0; i < numChildren; i++) {
     item.children.push(createRandomizedItem(depth + 1));
   }
@@ -129,14 +129,20 @@ function createRandomizedData() {
 
 function flattenNode(n, d) {
   var result = [
-    {
-      name: n.name,
-      depth: d
-    }
+    [
+      {
+        id: Math.random()
+          .toString(36)
+          .substr(2, 9),
+        name: n.name,
+        depth: d
+      },
+      Math.random() * 100
+    ]
   ];
 
   if (n.children.length !== 0) {
-    result[0].expanded = true;
+    result[0][0].expanded = true;
     n.children.forEach(function(c) {
       result = result.concat(flattenNode(c, d + 1));
     });
