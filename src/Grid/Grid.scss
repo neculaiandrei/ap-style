@@ -9,6 +9,9 @@
   border-right: 1px solid lightgrey;
   line-height: 36px;
 
+  user-select: none;
+  cursor: pointer;
+
   &--highlighted {
     background: lightyellow;
   }

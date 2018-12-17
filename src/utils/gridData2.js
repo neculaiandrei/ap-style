@@ -162,15 +162,6 @@ function flattenTreeData(data) {
   return result;
 }
 
-/*
-  This will create:
-- level 0 - 20 nodes
-- level 1 - random between 0 and 20 nodes
-- level 2 - random between 0 and 40 nodes
-- level 3 - random between 0 and 60 nodes
-
-On average you'll get ~120k nodes
-*/
 var treeData = createRandomizedData();
 var flattenData = flattenTreeData(treeData);
 var dataCount = getTreeDataCount(treeData);
