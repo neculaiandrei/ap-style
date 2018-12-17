@@ -92,7 +92,7 @@ class VirtualGrid extends React.Component {
     var i = startIndex;
     var endNotFound = true;
 
-    if (data[startIndex][0].depth === item.depth) {
+    if (data[startIndex][0].depth <= item.depth) {
       return;
     }
 
