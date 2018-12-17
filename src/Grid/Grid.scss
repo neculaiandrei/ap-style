@@ -8,4 +8,8 @@
   border-left: 1px solid lightgrey;
   border-right: 1px solid lightgrey;
   line-height: 36px;
+
+  &--selected {
+    background: lightyellow;
+  }
 }

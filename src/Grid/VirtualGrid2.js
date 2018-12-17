@@ -1,11 +1,6 @@
 import React from 'react';
 import { Grid } from 'react-virtualized';
 
-var VirtualGridRef;
-function setRef(ref) {
-  VirtualGridRef = ref;
-}
-
 class VirtualGrid extends React.Component {
   constructor(props) {
     super(props);
@@ -13,9 +8,16 @@ class VirtualGrid extends React.Component {
     this.backupData = [...props.data];
 
     this.state = {
-      data: props.data
+      data: props.data,
+      selectedId: -1
     };
   }
+
+  handleClick = id => {
+    this.setState({
+      selectedId: id
+    });
+  };
 
   findById = id => {
     return this.backupData.findIndex(i => {
@@ -31,8 +33,8 @@ class VirtualGrid extends React.Component {
     }
   };
 
-  expandRow = rowIndex => {
-    debugger;
+  expandRow = (e, rowIndex) => {
+    e.stopPropagation();
     var { data } = this.state;
     var id = data[rowIndex][0].id;
     var backupRowIndex = this.findById(id);
@@ -52,13 +54,10 @@ class VirtualGrid extends React.Component {
     while (endNotFound) {
       i++;
 
-      if (i === data.length) {
+      if (i === this.backupData.length) {
         stopIndex = i;
         endNotFound = false;
-        continue;
-      }
-
-      if (
+      } else if (
         this.backupData[i][0].depth <= this.backupData[backupRowIndex][0].depth
       ) {
         stopIndex = i;
@@ -76,7 +75,8 @@ class VirtualGrid extends React.Component {
     });
   };
 
-  collapseRow = rowIndex => {
+  collapseRow = (e, rowIndex) => {
+    e.stopPropagation();
     var { data } = this.state;
     var item = this.state.data[rowIndex][0];
     var startIndex = rowIndex + 1;
@@ -121,23 +121,19 @@ class VirtualGrid extends React.Component {
     }
   };
 
-  cellRenderer = ({ key, rowIndex, columnIndex, style }) => {
-    var item = this.state.data[rowIndex][columnIndex];
+  cellRenderer = ({ key, rowIndex, columnIndex, style, selectedId }) => {
+    var { data } = this.state;
+    var item = data[rowIndex][columnIndex];
+
     if (columnIndex === 0) {
       return (
         <div
-          className="ap-grid-cell"
+          className={`ap-grid-cell ${
+            item.id === selectedId ? 'ap-grid-cell--selected' : ''
+          }`}
           key={key}
           style={style}
-          onClick={_ => {
-            {
-              if (item.expanded) {
-                this.collapseRow(rowIndex);
-              } else {
-                this.expandRow(rowIndex);
-              }
-            }
-          }}
+          onClick={_ => this.handleClick(item.id)}
         >
           <div>
             <span
@@ -145,7 +141,18 @@ class VirtualGrid extends React.Component {
                 __html: this.levelRenderer(item.depth)
               }}
             />
-            <span>
+            <span
+              onClick={e => {
+                // eslint-disable-next-line no-lone-blocks
+                {
+                  if (item.expanded) {
+                    this.collapseRow(e, rowIndex);
+                  } else {
+                    this.expandRow(e, rowIndex);
+                  }
+                }
+              }}
+            >
               {item.expanded === undefined ? (
                 ''
               ) : item.expanded ? (
@@ -160,7 +167,13 @@ class VirtualGrid extends React.Component {
       );
     } else if (columnIndex === 1) {
       return (
-        <div className="ap-grid-cell" key={key} style={style}>
+        <div
+          className={`ap-grid-cell ${
+            data[rowIndex][0].id === selectedId ? 'ap-grid-cell--selected' : ''
+          }`}
+          key={key}
+          style={style}
+        >
           <div
             style={{
               left: '10px',
@@ -177,13 +190,12 @@ class VirtualGrid extends React.Component {
   };
 
   render() {
-    var { data } = this.state;
+    var { data, selectedId } = this.state;
     return (
       <div>
         <Grid
-          ref={setRef}
           className="ap-grid"
-          cellRenderer={this.cellRenderer}
+          cellRenderer={p => this.cellRenderer({ ...p, selectedId })}
           columnCount={2}
           columnWidth={this.getColumnWidth}
           height={700}
