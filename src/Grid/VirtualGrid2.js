@@ -1,12 +1,16 @@
 import React from 'react';
 import { Grid } from 'react-virtualized';
+import TreeNode from './TreeNode';
+import TimelineRow from './TimelineRow';
+
+const TREE_WIDTH = 350;
+const TIMELINE_WIDTH = 930;
 
 class VirtualGrid extends React.Component {
   constructor(props) {
     super(props);
 
-    this.backupData = [...props.data];
-
+    this.initialData = [...props.data];
     this.state = {
       data: props.data,
       selectedId: -1
@@ -20,21 +24,25 @@ class VirtualGrid extends React.Component {
   };
 
   findById = id => {
-    return this.backupData.findIndex(i => {
-      return i[0].id === id;
+    return this.initialData.findIndex(item => {
+      return item[0].id === id;
     });
   };
 
   getColumnWidth = ({ index }) => {
     if (index === 0) {
-      return 350;
+      return TREE_WIDTH;
     } else if (index === 1) {
-      return 930;
+      return TIMELINE_WIDTH;
     }
   };
 
-  expandRow = (e, rowIndex) => {
+  toggleNode = (e, rowIndex, expanded) => {
     e.stopPropagation();
+    expanded ? this.collapseRow(rowIndex) : this.expandRow(rowIndex);
+  };
+
+  expandRow = rowIndex => {
     var { data } = this.state;
     var id = data[rowIndex][0].id;
     var backupRowIndex = this.findById(id);
@@ -44,8 +52,8 @@ class VirtualGrid extends React.Component {
     var endNotFound = true;
 
     if (
-      this.backupData[startIndex][0].depth ===
-      this.backupData[backupRowIndex][0].depth
+      this.initialData[startIndex][0].depth ===
+      this.initialData[backupRowIndex][0].depth
     ) {
       data[rowIndex][0].expanded = true;
       return;
@@ -54,11 +62,12 @@ class VirtualGrid extends React.Component {
     while (endNotFound) {
       i++;
 
-      if (i === this.backupData.length) {
+      if (i === this.initialData.length) {
         stopIndex = i;
         endNotFound = false;
       } else if (
-        this.backupData[i][0].depth <= this.backupData[backupRowIndex][0].depth
+        this.initialData[i][0].depth <=
+        this.initialData[backupRowIndex][0].depth
       ) {
         stopIndex = i;
         endNotFound = false;
@@ -68,15 +77,14 @@ class VirtualGrid extends React.Component {
     data.splice(
       rowIndex + 1,
       0,
-      ...this.backupData.slice(startIndex, stopIndex)
+      ...this.initialData.slice(startIndex, stopIndex)
     );
     this.setState({
       data: data
     });
   };
 
-  collapseRow = (e, rowIndex) => {
-    e.stopPropagation();
+  collapseRow = rowIndex => {
     var { data } = this.state;
     var item = this.state.data[rowIndex][0];
     var startIndex = rowIndex + 1;
@@ -109,81 +117,26 @@ class VirtualGrid extends React.Component {
     });
   };
 
-  levelRenderer = depth => {
-    if (depth === 0) {
-      return '';
-    } else {
-      var result = '';
-      for (var i = 0; i < depth; i++) {
-        result += '&nbsp;&nbsp;&nbsp;&nbsp;';
-      }
-      return result;
-    }
-  };
-
   cellRenderer = ({ key, rowIndex, columnIndex, style, selectedId }) => {
     var { data } = this.state;
     var item = data[rowIndex][columnIndex];
+    var isSelected = data[rowIndex][0].id === selectedId;
 
     if (columnIndex === 0) {
       return (
-        <div
-          className={`ap-grid-cell ${
-            item.id === selectedId ? 'ap-grid-cell--selected' : ''
-          }`}
-          key={key}
-          style={style}
-          onClick={_ => this.handleClick(item.id)}
-        >
-          <div>
-            <span
-              dangerouslySetInnerHTML={{
-                __html: this.levelRenderer(item.depth)
-              }}
-            />
-            <span
-              onClick={e => {
-                // eslint-disable-next-line no-lone-blocks
-                {
-                  if (item.expanded) {
-                    this.collapseRow(e, rowIndex);
-                  } else {
-                    this.expandRow(e, rowIndex);
-                  }
-                }
-              }}
-            >
-              {item.expanded === undefined ? (
-                ''
-              ) : item.expanded ? (
-                <b>&#9207;</b>
-              ) : (
-                <b>&#9205;</b>
-              )}
-            </span>
-            {`${item.depth}-${item.name}`}
-          </div>
+        <div key={key} style={style}>
+          <TreeNode
+            item={item}
+            isHighlighted={isSelected}
+            onClick={_ => this.handleClick(item.id)}
+            onToggle={e => this.toggleNode(e, rowIndex, item.expanded)}
+          />
         </div>
       );
     } else if (columnIndex === 1) {
       return (
-        <div
-          className={`ap-grid-cell ${
-            data[rowIndex][0].id === selectedId ? 'ap-grid-cell--selected' : ''
-          }`}
-          key={key}
-          style={style}
-        >
-          <div
-            style={{
-              left: '10px',
-              display: 'inline-block',
-              position: 'relative',
-              width: `${item.width}%`,
-              left: `${item.left}%`,
-              border: '3px black solid'
-            }}
-          />
+        <div key={key} style={style}>
+          <TimelineRow item={item} isHighlighted={isSelected} />
         </div>
       );
     }
@@ -201,7 +154,7 @@ class VirtualGrid extends React.Component {
           height={700}
           rowCount={data.length}
           rowHeight={36}
-          width={1300}
+          width={TREE_WIDTH + TIMELINE_WIDTH + 20}
         />
         <p>Now nodes: {data.length}</p>
       </div>
